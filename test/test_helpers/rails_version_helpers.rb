@@ -1,4 +1,4 @@
-module SecondBase
+module ThirdBase
   module RailsVersionHelpers
 
     extend ActiveSupport::Concern

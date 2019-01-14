@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class DbTaskTest < SecondBase::TestCase
+class DbTaskTest < ThirdBase::TestCase
 
   def test_db_create
     refute_dummy_databases
@@ -66,95 +66,95 @@ class DbTaskTest < SecondBase::TestCase
     assert_match %r{create_table "posts"}, schema
     refute_match %r{create_table "comments"}, schema
     assert_connection_tables ActiveRecord::Base, ['users', 'posts']
-    # Second database and schema.
-    secondbase_schema = File.read(dummy_secondbase_schema)
-    assert_match %r{version: 20151202075826}, secondbase_schema
-    refute_match %r{create_table "users"}, secondbase_schema
-    refute_match %r{create_table "posts"}, secondbase_schema
-    assert_match %r{create_table "comments"}, secondbase_schema
-    assert_connection_tables SecondBase::Base, ['comments']
+    # Third database and schema.
+    thirdbase_schema = File.read(dummy_thirdbase_schema)
+    assert_match %r{version: 20151202075826}, thirdbase_schema
+    refute_match %r{create_table "users"}, thirdbase_schema
+    refute_match %r{create_table "posts"}, thirdbase_schema
+    assert_match %r{create_table "comments"}, thirdbase_schema
+    assert_connection_tables ThirdBase::Base, ['comments']
   end
 
-  def test_secondbase_migrate_updown
+  def test_thirdbase_migrate_updown
     run_db :create
     run_db :migrate
     assert_match(/no migration.*20151202075826/i, run_db('migrate:down VERSION=20151202075826', :stderr))
-    run_secondbase 'migrate:down VERSION=20151202075826'
-    secondbase_schema = File.read(dummy_secondbase_schema)
-    refute_match %r{version: 20151202075826}, secondbase_schema
-    refute_match %r{create_table "comments"}, secondbase_schema
+    run_thirdbase 'migrate:down VERSION=20151202075826'
+    thirdbase_schema = File.read(dummy_thirdbase_schema)
+    refute_match %r{version: 20151202075826}, thirdbase_schema
+    refute_match %r{create_table "comments"}, thirdbase_schema
     assert_match(/no migration.*20151202075826/i, run_db('migrate:up VERSION=20151202075826', :stderr))
-    run_secondbase 'migrate:up VERSION=20151202075826'
-    secondbase_schema = File.read(dummy_secondbase_schema)
-    assert_match %r{version: 20151202075826}, secondbase_schema
-    assert_match %r{create_table "comments"}, secondbase_schema
+    run_thirdbase 'migrate:up VERSION=20151202075826'
+    thirdbase_schema = File.read(dummy_thirdbase_schema)
+    assert_match %r{version: 20151202075826}, thirdbase_schema
+    assert_match %r{create_table "comments"}, thirdbase_schema
   end
 
-  def test_secondbase_migrate_reset
+  def test_thirdbase_migrate_reset
     run_db :create
     run_db :migrate
-    secondbase_schema = File.read(dummy_secondbase_schema)
-    assert_match %r{version: 20151202075826}, secondbase_schema
-    assert_match %r{create_table "comments"}, secondbase_schema
-    FileUtils.rm_rf dummy_secondbase_schema
-    run_secondbase 'migrate:reset'
-    secondbase_schema = File.read(dummy_secondbase_schema)
-    assert_match %r{version: 20151202075826}, secondbase_schema
-    assert_match %r{create_table "comments"}, secondbase_schema
+    thirdbase_schema = File.read(dummy_thirdbase_schema)
+    assert_match %r{version: 20151202075826}, thirdbase_schema
+    assert_match %r{create_table "comments"}, thirdbase_schema
+    FileUtils.rm_rf dummy_thirdbase_schema
+    run_thirdbase 'migrate:reset'
+    thirdbase_schema = File.read(dummy_thirdbase_schema)
+    assert_match %r{version: 20151202075826}, thirdbase_schema
+    assert_match %r{create_table "comments"}, thirdbase_schema
   end
 
-  def test_secondbase_migrate_redo
+  def test_thirdbase_migrate_redo
     run_db :create
     run_db :migrate
-    secondbase_schema = File.read(dummy_secondbase_schema)
-    assert_match %r{version: 20151202075826}, secondbase_schema
-    assert_match %r{create_table "comments"}, secondbase_schema
-    FileUtils.rm_rf dummy_secondbase_schema
-    run_secondbase 'migrate:redo'
-    secondbase_schema = File.read(dummy_secondbase_schema)
-    assert_match %r{version: 20151202075826}, secondbase_schema
-    assert_match %r{create_table "comments"}, secondbase_schema
-    # Can redo latest SecondBase migration using previous VERSION env.
+    thirdbase_schema = File.read(dummy_thirdbase_schema)
+    assert_match %r{version: 20151202075826}, thirdbase_schema
+    assert_match %r{create_table "comments"}, thirdbase_schema
+    FileUtils.rm_rf dummy_thirdbase_schema
+    run_thirdbase 'migrate:redo'
+    thirdbase_schema = File.read(dummy_thirdbase_schema)
+    assert_match %r{version: 20151202075826}, thirdbase_schema
+    assert_match %r{create_table "comments"}, thirdbase_schema
+    # Can redo latest ThirdBase migration using previous VERSION env.
     version = dummy_migration[:version]
     run_db :migrate
-    assert_match %r{version: #{version}}, File.read(dummy_secondbase_schema)
+    assert_match %r{version: #{version}}, File.read(dummy_thirdbase_schema)
     establish_connection
     Comment.create! body: 'test', user_id: 420
-    run_secondbase 'migrate:redo VERSION=20151202075826'
-    secondbase_schema = File.read(dummy_secondbase_schema)
-    assert_match %r{version: #{version}}, secondbase_schema
-    assert_match %r{create_table "comments"}, secondbase_schema
+    run_thirdbase 'migrate:redo VERSION=20151202075826'
+    thirdbase_schema = File.read(dummy_thirdbase_schema)
+    assert_match %r{version: #{version}}, thirdbase_schema
+    assert_match %r{create_table "comments"}, thirdbase_schema
     establish_connection
     assert_nil Comment.first
   end
 
-  def test_secondbase_migrate_status
+  def test_thirdbase_migrate_status
     run_db :create
     stream = rails_42_up? ? :stderr : :stdout
-    assert_match %r{migrations table does not exist}, run_secondbase('migrate:status', stream)
+    assert_match %r{migrations table does not exist}, run_thirdbase('migrate:status', stream)
     run_db :migrate
-    assert_match %r{up.*20151202075826}, run_secondbase('migrate:status')
+    assert_match %r{up.*20151202075826}, run_thirdbase('migrate:status')
     version = dummy_migration[:version]
-    status = run_secondbase('migrate:status')
+    status = run_thirdbase('migrate:status')
     assert_match %r{up.*20151202075826}, status
     assert_match %r{down.*#{version}}, status
   end
 
-  def test_secondbase_forward_and_rollback
+  def test_thirdbase_forward_and_rollback
     run_db :create
     run_db :migrate
-    secondbase_schema = File.read(dummy_secondbase_schema)
-    assert_match %r{version: 20151202075826}, secondbase_schema
-    refute_match %r{create_table "foos"}, secondbase_schema
+    thirdbase_schema = File.read(dummy_thirdbase_schema)
+    assert_match %r{version: 20151202075826}, thirdbase_schema
+    refute_match %r{create_table "foos"}, thirdbase_schema
     version = dummy_migration[:version] # ActiveRecord does not support start index 0.
-    run_secondbase :forward
-    secondbase_schema = File.read(dummy_secondbase_schema)
-    assert_match %r{version: #{version}}, secondbase_schema
-    assert_match %r{create_table "foos"}, secondbase_schema
-    run_secondbase :rollback
-    secondbase_schema = File.read(dummy_secondbase_schema)
-    assert_match %r{version: 20151202075826}, secondbase_schema
-    refute_match %r{create_table "foos"}, secondbase_schema
+    run_thirdbase :forward
+    thirdbase_schema = File.read(dummy_thirdbase_schema)
+    assert_match %r{version: #{version}}, thirdbase_schema
+    assert_match %r{create_table "foos"}, thirdbase_schema
+    run_thirdbase :rollback
+    thirdbase_schema = File.read(dummy_thirdbase_schema)
+    assert_match %r{version: 20151202075826}, thirdbase_schema
+    refute_match %r{create_table "foos"}, thirdbase_schema
   end
 
   def test_db_test_purge
@@ -173,7 +173,7 @@ class DbTaskTest < SecondBase::TestCase
     Dir.chdir(dummy_root) { `rake db:test:load_schema` }
     establish_connection
     assert_connection_tables ActiveRecord::Base, ['users', 'posts']
-    assert_connection_tables SecondBase::Base, ['comments']
+    assert_connection_tables ThirdBase::Base, ['comments']
   end
 
   def test_db_test_load_schema_via_env
@@ -184,7 +184,7 @@ class DbTaskTest < SecondBase::TestCase
     Dir.chdir(dummy_root) { `rake db:test:load_schema` }
     establish_connection
     assert_connection_tables ActiveRecord::Base, ['users', 'posts']
-    assert_connection_tables SecondBase::Base, ['comments']
+    assert_connection_tables ThirdBase::Base, ['comments']
   end
 
   def test_db_test_schema_cache_dump
@@ -195,14 +195,14 @@ class DbTaskTest < SecondBase::TestCase
     assert_dummy_databases
     Dir.chdir(dummy_root) { `rake db:schema:cache:dump` }
     assert File.file?(dummy_schema_cache), 'dummy schema cache does not exist'
-    assert File.file?(dummy_secondbase_schema_cache), 'dummy secondbase schema cache does not exist'
+    assert File.file?(dummy_thirdbase_schema_cache), 'dummy thirdbase schema cache does not exist'
     cache1 = Marshal.load(File.binread(dummy_schema_cache))
-    cache2 = Marshal.load(File.binread(dummy_secondbase_schema_cache))
+    cache2 = Marshal.load(File.binread(dummy_thirdbase_schema_cache))
     source_method = rails_50_up? ? :data_sources : :tables
     assert cache1.send(source_method, 'posts'),    'base should have posts table in cache'
     refute cache1.send(source_method, 'comments'), 'base should not have comments table in cache'
-    refute cache2.send(source_method, 'posts'),    'secondbase should not have posts table in cache'
-    assert cache2.send(source_method, 'comments'), 'secondbase should have comments table in cache'
+    refute cache2.send(source_method, 'posts'),    'thirdbase should not have posts table in cache'
+    assert cache2.send(source_method, 'comments'), 'thirdbase should have comments table in cache'
   end
 
   def test_abort_if_pending
@@ -225,37 +225,37 @@ class DbTaskTest < SecondBase::TestCase
     Dir.chdir(dummy_root) { `rake db:test:load_structure` }
     establish_connection
     assert_connection_tables ActiveRecord::Base, ['users', 'posts']
-    assert_connection_tables SecondBase::Base, ['comments']
+    assert_connection_tables ThirdBase::Base, ['comments']
   end
 
-  def test_secondbase_version
+  def test_thirdbase_version
     run_db :create
-    assert_match(/version: 0/, run_secondbase(:version))
+    assert_match(/version: 0/, run_thirdbase(:version))
     run_db :migrate
     assert_match(/version: 20141214142700/, run_db(:version))
-    assert_match(/version: 20151202075826/, run_secondbase(:version))
+    assert_match(/version: 20151202075826/, run_thirdbase(:version))
   end
 
-  def test_secondbase_db_tasks_disabled
+  def test_thirdbase_db_tasks_disabled
     refute_dummy_databases
     run_db :create, :stdout, false
-    assert_dummy_created_but_not_secondbase
+    assert_dummy_created_but_not_thirdbase
   end
 
   private
 
-  def assert_dummy_created_but_not_secondbase
+  def assert_dummy_created_but_not_thirdbase
     assert_equal 'base.sqlite3', dummy_database_sqlite
-    refute_match(/secondbase_test/, `mysql -uroot -e "SHOW DATABASES"`)
+    refute_match(/thirdbase_test/, `mysql -uroot -e "SHOW DATABASES"`)
   end
 
   def assert_no_tables
     if ActiveRecord::Base.connection.respond_to? :data_sources
       assert_equal [], ActiveRecord::Base.connection.data_sources
-      assert_equal [], SecondBase::Base.connection.data_sources
+      assert_equal [], ThirdBase::Base.connection.data_sources
     else
       assert_equal [], ActiveRecord::Base.connection.tables
-      assert_equal [], SecondBase::Base.connection.tables
+      assert_equal [], ThirdBase::Base.connection.tables
     end
   end
 

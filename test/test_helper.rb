@@ -2,7 +2,7 @@ ENV['RAILS_ENV'] ||= 'test'
 ENV['BUNDLE_GEMFILE'] ||= File.expand_path('../../Gemfile', __FILE__)
 require 'bundler/setup'
 Bundler.require :default, :development
-require 'second_base'
+require 'third_base'
 require 'active_support/test_case'
 require 'active_support/testing/autorun'
 
@@ -17,7 +17,7 @@ Dir['test/test_helpers/*.{rb}'].each { |f| require_relative "../#{f}" }
 
 ActiveSupport.test_order = :random if ActiveSupport.respond_to?(:test_order)
 
-module SecondBase
+module ThirdBase
   class TestCase < ActiveSupport::TestCase
 
     if Rails.version.to_i == 4
@@ -38,8 +38,8 @@ module SecondBase
     def establish_connection
       ActiveRecord::Base.establish_connection
       ActiveRecord::Base.connection
-      SecondBase::Base.establish_connection(SecondBase.config)
-      SecondBase::Base.connection
+      ThirdBase::Base.establish_connection(ThirdBase.config)
+      ThirdBase::Base.connection
     end
 
   end

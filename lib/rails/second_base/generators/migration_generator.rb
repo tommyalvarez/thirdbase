@@ -2,7 +2,7 @@ require 'rails/generators'
 require 'rails/generators/active_record'
 require 'rails/generators/active_record/migration/migration_generator'
 
-module SecondBase
+module ThirdBase
   class MigrationGenerator < ActiveRecord::Generators::MigrationGenerator
 
     source_root ActiveRecord::Generators::MigrationGenerator.source_root

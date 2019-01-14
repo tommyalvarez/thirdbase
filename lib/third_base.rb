@@ -1,12 +1,12 @@
 require 'rails'
 require 'active_record'
 require 'active_record/railtie'
-require 'second_base/version'
-require 'second_base/railtie'
-require 'second_base/on_base'
-require 'second_base/forced'
+require 'third_base/version'
+require 'third_base/railtie'
+require 'third_base/on_base'
+require 'third_base/forced'
 
-module SecondBase
+module ThirdBase
 
   extend ActiveSupport::Autoload
 

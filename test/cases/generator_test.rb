@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class GeneratorTest < SecondBase::TestCase
+class GeneratorTest < ThirdBase::TestCase
 
   teardown do
     generated_migration_delete
@@ -9,17 +9,17 @@ class GeneratorTest < SecondBase::TestCase
 
   def test_initialization_via_help
     output = Dir.chdir(dummy_root) { `rails g -h` }
-    assert_match(/second_base\:migration/, output)
+    assert_match(/third_base\:migration/, output)
   end
 
   def test_description_uses_rails_base
-    output = Dir.chdir(dummy_root) { `rails g second_base:migration -h` }
+    output = Dir.chdir(dummy_root) { `rails g third_base:migration -h` }
     assert_match %r{db/migrate/20080514090912_add_ssl_flag\.rb}, output
   end
 
   def test_migration
-    output = Dir.chdir(dummy_root) { `rails g second_base:migration CreateFavorites post_id:integer count:integer` }
-    assert_match %r{create.*db/secondbase/migrate/.*create_favorites\.rb}, output
+    output = Dir.chdir(dummy_root) { `rails g third_base:migration CreateFavorites post_id:integer count:integer` }
+    assert_match %r{create.*db/thirdbase/migrate/.*create_favorites\.rb}, output
     migration = generated_migration_data
     assert_match %r{create_table :favorites}, migration
     assert_match %r{t.integer :post_id}, migration
@@ -38,7 +38,7 @@ class GeneratorTest < SecondBase::TestCase
   private
 
   def generated_migration
-    Dir["#{dummy_db}/secondbase/migrate/*favorites.{rb}"].first
+    Dir["#{dummy_db}/thirdbase/migrate/*favorites.{rb}"].first
   end
 
   def generated_migration_data

@@ -1,4 +1,4 @@
-class Comment < SecondBase::Base
+class Comment < ThirdBase::Base
 
   belongs_to :user
 

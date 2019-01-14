@@ -1,8 +1,8 @@
-module SecondBase
+module ThirdBase
   class Base < ActiveRecord::Base
 
     self.abstract_class = true
-    establish_connection SecondBase.config
+    establish_connection ThirdBase.config
 
   end
 end
